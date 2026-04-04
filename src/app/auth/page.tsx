@@ -100,7 +100,7 @@ export default function AuthPage() {
       >
 
         {/* Left panel */}
-        <div className="relative p-6 sm:p-10 flex flex-col justify-between min-h-[480px] sm:min-h-[300px] lg:min-h-[580px] overflow-hidden hidden md:flex" style={{ background: 'linear-gradient(135deg, #120e2e 0%, #1e1540 50%, #2a1550 100%)' }}>
+        <div className="relative p-6 sm:p-10 md:flex hidden flex-col justify-between min-h-[480px] sm:min-h-[300px] lg:min-h-[580px] overflow-hidden" style={{ background: 'linear-gradient(135deg, #120e2e 0%, #1e1540 50%, #2a1550 100%)' }}>
           {/* Decorative grid */}
           <div className="absolute inset-0 opacity-10" style={{
             backgroundImage: 'linear-gradient(rgba(107,92,230,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(107,92,230,0.4) 1px,transparent 1px)',
