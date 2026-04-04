@@ -26,12 +26,10 @@ export default function IncomePage() {
       if (!user) return
       const { data, error } = await supabase.from('income').select('*').eq('user_id', user.id).eq('month', currentMonth).order('created_at')
       if (error) {
-        console.error('Error loading income:', error)
         return
       }
       if (data) setIncome(data)
-    } catch (err) {
-      console.error('Failed to reload income:', err)
+    } catch {
     }
   }, [currentMonth, setIncome])
 
@@ -49,7 +47,6 @@ export default function IncomePage() {
         start_day: form.start_day || null,
       })
       if (error) {
-        console.error('Error adding income:', error)
         return
       }
       setForm({ name: '', payday: '', expected: '', actual: '', start_day: '' })
@@ -70,7 +67,6 @@ export default function IncomePage() {
         start_day: editForm.start_day || null,
       }).eq('id', id)
       if (error) {
-        console.error('Error updating income:', error)
         return
       }
       setEditId(null)
@@ -84,12 +80,10 @@ export default function IncomePage() {
     try {
       const { error } = await supabase.from('income').delete().eq('id', id)
       if (error) {
-        console.error('Error deleting income:', error)
         return
       }
       reload()
-    } catch (err) {
-      console.error('Delete failed:', err)
+    } catch {
     }
   }
 

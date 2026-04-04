@@ -33,7 +33,6 @@ export default function SettingsPage() {
         currency,
       }).eq('id', profile.id).select().single()
       if (error) {
-        console.error('Error saving settings:', error)
         return
       }
       if (data) {

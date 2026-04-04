@@ -18,19 +18,19 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 export async function POST(req: NextRequest) {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY
   const monthlyPriceId = process.env.STRIPE_PRICE_ID_MONTHLY
-  const annualPriceId  = process.env.STRIPE_PRICE_ID_ANNUAL || process.env.STRIPE_PRICE_ID_YEARLY
+  const annualPriceId  = process.env.STRIPE_PRICE_ID_ANNUAL
   const appUrl         = process.env.NEXT_PUBLIC_APP_URL || new URL(req.url).origin
 
   if (!stripeSecretKey || !monthlyPriceId || !annualPriceId) {
     const missingVars = [
       !stripeSecretKey ? 'STRIPE_SECRET_KEY' : null,
       !monthlyPriceId ? 'STRIPE_PRICE_ID_MONTHLY' : null,
-      !annualPriceId ? 'STRIPE_PRICE_ID_ANNUAL (or STRIPE_PRICE_ID_YEARLY)' : null,
+      !annualPriceId ? 'STRIPE_PRICE_ID_ANNUAL' : null,
     ].filter(Boolean)
 
     return NextResponse.json(
       {
-        error: 'Stripe is not configured. Add STRIPE_SECRET_KEY, STRIPE_PRICE_ID_MONTHLY, and STRIPE_PRICE_ID_ANNUAL (or STRIPE_PRICE_ID_YEARLY).',
+        error: 'Stripe is not configured. Add STRIPE_SECRET_KEY, STRIPE_PRICE_ID_MONTHLY, and STRIPE_PRICE_ID_ANNUAL.',
         missing: missingVars,
       },
       { status: 500 }
@@ -89,7 +89,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url })
   } catch (error) {
-    console.error('Checkout error:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to create checkout session' },
       { status: 500 }

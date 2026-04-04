@@ -32,8 +32,7 @@ export function useMonthData() {
         if (sav.data) setSavings(sav.data)
         if (dbt.data) setDebt(dbt.data)
         if (txn.data) setTransactions(txn.data)
-      } catch (error) {
-        console.error('Error loading month data:', error)
+      } catch {
       } finally {
         setLoading(false)
       }

@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
   }
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    console.error('STRIPE_WEBHOOK_SECRET not configured')
     return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
   }
 
@@ -27,8 +26,7 @@ export async function POST(req: NextRequest) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     )
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err)
+  } catch {
     return NextResponse.json(
       { error: 'Webhook signature verification failed' },
       { status: 400 }
@@ -40,7 +38,6 @@ export async function POST(req: NextRequest) {
     if (event.type === 'invoice.payment_succeeded') {
       const invoice = event.data.object as any
       if (!invoice.subscription) {
-        console.error('Invoice missing subscription')
         return NextResponse.json({ received: true })
       }
 
@@ -55,16 +52,10 @@ export async function POST(req: NextRequest) {
       if (userId) {
         // Update user's plan to 'pro' in database
         const supabase = createServerSupabaseClient()
-        const { error } = await supabase
+        await supabase
           .from('profiles')
           .update({ plan: 'pro' })
           .eq('id', userId)
-
-        if (error) {
-          console.error('Error updating user plan:', error)
-        } else {
-          console.log(`✅ User ${userId} upgraded to Pro`)
-        }
       }
     }
 
@@ -76,22 +67,15 @@ export async function POST(req: NextRequest) {
       if (userId) {
         // Optionally downgrade user back to 'free'
         const supabase = createServerSupabaseClient()
-        const { error } = await supabase
+        await supabase
           .from('profiles')
           .update({ plan: 'free' })
           .eq('id', userId)
-
-        if (error) {
-          console.error('Error downgrading user plan:', error)
-        } else {
-          console.log(`ℹ️ User ${userId} downgraded to Free`)
-        }
       }
     }
 
     return NextResponse.json({ received: true })
-  } catch (error) {
-    console.error('Webhook processing error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to process webhook' },
       { status: 500 }

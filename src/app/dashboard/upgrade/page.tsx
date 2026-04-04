@@ -239,7 +239,6 @@ export default function UpgradePage() {
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Failed to start checkout'
       setCheckoutError(message)
-      console.error(e)
     }
     setCheckoutLoading(false)
   }

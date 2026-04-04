@@ -20,12 +20,10 @@ export default function BillsPage() {
       if (!user) return
       const { data, error } = await supabase.from('bills').select('*').eq('user_id', user.id).eq('month', currentMonth).order('created_at')
       if (error) {
-        console.error('Error loading bills:', error)
         return
       }
       if (data) setBills(data)
-    } catch (err) {
-      console.error('Failed to reload bills:', err)
+    } catch {
     }
   }, [currentMonth, setBills])
 
