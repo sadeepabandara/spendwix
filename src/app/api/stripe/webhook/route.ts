@@ -38,12 +38,17 @@ export async function POST(req: NextRequest) {
   try {
     // Handle successful subscription payment
     if (event.type === 'invoice.payment_succeeded') {
-      const invoice = event.data.object as Stripe.Invoice
-      
-      // Get the subscription to access metadata
-      const subscription = await stripe.subscriptions.retrieve(
-        invoice.subscription as string
-      )
+      const invoice = event.data.object as any
+      if (!invoice.subscription) {
+        console.error('Invoice missing subscription')
+        return NextResponse.json({ received: true })
+      }
+
+      const subscriptionId = typeof invoice.subscription === 'string'
+        ? invoice.subscription
+        : invoice.subscription.id
+
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
       const userId = subscription.metadata?.user_id
 
