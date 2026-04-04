@@ -23,7 +23,7 @@ A modern, minimal personal finance tracker built with **Next.js 14**, **Supabase
 ### 1. Clone and install
 
 ```bash
-cd spendwise
+cd spendwix
 npm install
 ```
 
