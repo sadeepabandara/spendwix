@@ -216,8 +216,10 @@ export default function UpgradePage() {
   const sym = CURRENCY_SYMBOLS[currency]
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState('')
 
   const handleUpgrade = async () => {
+    setCheckoutError('')
     setCheckoutLoading(true)
     try {
       const res = await fetch('/api/stripe/checkout', {
@@ -226,9 +228,17 @@ export default function UpgradePage() {
         body: JSON.stringify({ billing, currency }),
       })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
-      else console.error('No checkout URL returned', data)
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to start checkout')
+      }
+      if (data.url) {
+        window.location.href = data.url
+        return
+      }
+      throw new Error('No checkout URL returned')
     } catch (e) {
+      const message = e instanceof Error ? e.message : 'Failed to start checkout'
+      setCheckoutError(message)
       console.error(e)
     }
     setCheckoutLoading(false)
@@ -344,6 +354,11 @@ export default function UpgradePage() {
       <p className="text-xs text-gray-400 mt-6 max-w-2xl">
         Payment processing via Stripe. Cancel anytime — no questions asked. Your data is always yours and will never be sold.
       </p>
+      {checkoutError && (
+        <p className="mt-3 text-xs text-red-500 bg-red-50 dark:bg-red-950/40 dark:text-red-300 rounded-lg px-3 py-2 inline-block">
+          {checkoutError}
+        </p>
+      )}
     </div>
   )
 }

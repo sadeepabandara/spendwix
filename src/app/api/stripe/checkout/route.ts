@@ -18,12 +18,21 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 export async function POST(req: NextRequest) {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY
   const monthlyPriceId = process.env.STRIPE_PRICE_ID_MONTHLY
-  const annualPriceId  = process.env.STRIPE_PRICE_ID_ANNUAL
-  const appUrl         = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const annualPriceId  = process.env.STRIPE_PRICE_ID_ANNUAL || process.env.STRIPE_PRICE_ID_YEARLY
+  const appUrl         = process.env.NEXT_PUBLIC_APP_URL || new URL(req.url).origin
 
   if (!stripeSecretKey || !monthlyPriceId || !annualPriceId) {
+    const missingVars = [
+      !stripeSecretKey ? 'STRIPE_SECRET_KEY' : null,
+      !monthlyPriceId ? 'STRIPE_PRICE_ID_MONTHLY' : null,
+      !annualPriceId ? 'STRIPE_PRICE_ID_ANNUAL (or STRIPE_PRICE_ID_YEARLY)' : null,
+    ].filter(Boolean)
+
     return NextResponse.json(
-      { error: 'Stripe is not configured. Add STRIPE_SECRET_KEY, STRIPE_PRICE_ID_MONTHLY, and STRIPE_PRICE_ID_ANNUAL to your .env.local file.' },
+      {
+        error: 'Stripe is not configured. Add STRIPE_SECRET_KEY, STRIPE_PRICE_ID_MONTHLY, and STRIPE_PRICE_ID_ANNUAL (or STRIPE_PRICE_ID_YEARLY).',
+        missing: missingVars,
+      },
       { status: 500 }
     )
   }
@@ -54,6 +63,13 @@ export async function POST(req: NextRequest) {
     const stripe = new Stripe(stripeSecretKey, { apiVersion: '2024-04-10' })
     const body = await req.json()
     const priceId = body.billing === 'annual' ? annualPriceId : monthlyPriceId
+
+    if (!priceId) {
+      return NextResponse.json(
+        { error: 'No Stripe price configured for selected billing cycle.' },
+        { status: 400 }
+      )
+    }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
