@@ -7,12 +7,31 @@ import { supabase } from '@/lib/supabase'
 import { CURRENCY_OPTIONS, Currency } from '@/types'
 import PageHeader from '@/components/PageHeader'
 
+type ThemePreference = 'light' | 'dark' | 'system'
+
+const THEME_STORAGE_KEY = 'spendwix:theme'
+
+function getThemePreference(): ThemePreference {
+  if (typeof window === 'undefined') return 'light'
+  const saved = window.localStorage.getItem(THEME_STORAGE_KEY)
+  if (saved === 'light' || saved === 'dark' || saved === 'system') return saved
+  return 'light'
+}
+
+function applyThemePreference(preference: ThemePreference) {
+  if (typeof window === 'undefined') return
+  const shouldUseDark = preference === 'dark' || (preference === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  document.documentElement.classList.toggle('dark', shouldUseDark)
+  window.localStorage.setItem(THEME_STORAGE_KEY, preference)
+}
+
 export default function SettingsPage() {
   useMonthData()
   const { profile, setProfile } = useStore()
 
   const [name, setName] = useState(profile?.full_name || '')
   const [currency, setCurrency] = useState<Currency>(profile?.currency || 'USD')
+  const [theme, setTheme] = useState<ThemePreference>('light')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -23,6 +42,18 @@ export default function SettingsPage() {
       setCurrency(profile.currency || 'USD')
     }
   }, [profile?.id, profile?.full_name, profile?.currency])
+
+  useEffect(() => {
+    setTheme(getThemePreference())
+  }, [])
+
+  useEffect(() => {
+    if (theme !== 'system') return
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = () => applyThemePreference('system')
+    media.addEventListener('change', handleChange)
+    return () => media.removeEventListener('change', handleChange)
+  }, [theme])
 
   const handleSave = async () => {
     if (!profile) return
@@ -37,6 +68,7 @@ export default function SettingsPage() {
       }
       if (data) {
         setProfile(data)
+        applyThemePreference(theme)
         setSaved(true)
         setTimeout(() => setSaved(false), 2000)
       }
@@ -76,14 +108,26 @@ export default function SettingsPage() {
         {/* Preferences */}
         <div className="p-4 sm:p-6 card">
           <h2 className="section-title">Preferences</h2>
-          <div>
+          <div className="space-y-4">
             <label className="label">Currency</label>
-            <select className="input" value={currency} onChange={e => setCurrency(e.target.value as Currency)}>
-              {CURRENCY_OPTIONS.map(([k, v]) => (
-                <option key={k} value={k}>{v}</option>
-              ))}
-            </select>
-            <p className="mt-1 text-xs text-gray-400">Used to format all amounts across the app</p>
+            <div>
+              <select className="input" value={currency} onChange={e => setCurrency(e.target.value as Currency)}>
+                {CURRENCY_OPTIONS.map(([k, v]) => (
+                  <option key={k} value={k}>{v}</option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-400">Used to format all amounts across the app</p>
+            </div>
+
+            <div>
+              <label className="label">Theme</label>
+              <select className="input" value={theme} onChange={e => setTheme(e.target.value as ThemePreference)}>
+                <option value="light">Light mode</option>
+                <option value="dark">Dark mode</option>
+                <option value="system">Device theme</option>
+              </select>
+              <p className="mt-1 text-xs text-gray-400">Device theme follows your phone or computer appearance setting</p>
+            </div>
           </div>
         </div>
 

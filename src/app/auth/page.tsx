@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import ThemeToggle from '@/components/ThemeToggle'
 
 const THEME_STORAGE_KEY = 'spendwix:theme'
 
@@ -43,10 +42,8 @@ export default function AuthPage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
-      document.documentElement.classList.add('dark')
-    }
+    // Auth screen always keeps the outside shell in dark style.
+    document.documentElement.classList.add('dark')
   }, [])
 
   const handleEmail = async (e: React.FormEvent) => {
@@ -92,10 +89,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen p-3 overflow-hidden sm:p-4 bg-gray-50 dark:bg-[#0e0b1f]">
-      <div className="absolute top-4 right-4 z-20">
-        <ThemeToggle className="w-10 h-10" />
-      </div>
+    <div className="relative flex items-center justify-center min-h-screen p-3 overflow-hidden sm:p-4" style={{ background: '#0e0b1f' }}>
 
       {/* Animated background blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -112,7 +106,7 @@ export default function AuthPage() {
       >
 
         {/* Left panel */}
-        <div className="relative p-6 sm:p-10 md:flex hidden flex-col justify-between min-h-[480px] sm:min-h-[300px] lg:min-h-[580px] overflow-hidden bg-gradient-to-br from-[#f7f5ff] via-[#efeaff] to-[#e7dfff] dark:from-[#120e2e] dark:via-[#1e1540] dark:to-[#2a1550]">
+        <div className="relative p-6 sm:p-10 md:flex hidden flex-col justify-between min-h-[480px] sm:min-h-[300px] lg:min-h-[580px] overflow-hidden" style={{ background: 'linear-gradient(135deg, #120e2e 0%, #1e1540 50%, #2a1550 100%)' }}>
           {/* Decorative grid */}
           <div className="absolute inset-0 opacity-[0.08] dark:opacity-10" style={{
             backgroundImage: 'linear-gradient(rgba(107,92,230,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(107,92,230,0.4) 1px,transparent 1px)',
@@ -170,7 +164,7 @@ export default function AuthPage() {
         </div>
 
         {/* Right panel */}
-        <div className="flex flex-col justify-center p-6 bg-white sm:p-10 dark:bg-[#13182a]">
+        <div className="flex flex-col justify-center p-6 bg-white sm:p-10">
           <AnimatePresence mode="wait">
             {message ? (
               <motion.div
@@ -185,7 +179,7 @@ export default function AuthPage() {
                     <path d="M4 11l5 5 9-9" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <h2 className="mb-2 text-lg font-bold text-gray-900 sm:text-xl dark:text-white">Check your email</h2>
+                <h2 className="mb-2 text-lg font-bold text-gray-900 sm:text-xl">Check your email</h2>
                 <p className="text-sm text-gray-500">{message}</p>
                 <button onClick={() => setMessage('')} className="mt-6 btn-secondary">Back to sign in</button>
               </motion.div>
@@ -198,7 +192,7 @@ export default function AuthPage() {
                 transition={{ duration: 0.28 }}
               >
                 {/* Tab toggle */}
-                <div className="flex p-1 mb-7 rounded-xl bg-brand-50 dark:bg-[#101425] border border-brand-100 dark:border-[#252c46]">
+                <div className="flex p-1 mb-7 rounded-xl bg-brand-50 border border-brand-100">
                   {(['signin','signup'] as const).map(t => (
                     <button key={t} onClick={() => { setTab(t); setError('') }}
                       className="flex-1 py-2.5 text-sm rounded-lg font-semibold transition-all"
@@ -217,7 +211,7 @@ export default function AuthPage() {
                   key={tab + 'h'}
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="mb-1 text-xl font-bold text-gray-900 sm:text-2xl dark:text-white"
+                  className="mb-1 text-xl font-bold text-gray-900 sm:text-2xl"
                 >
                   {tab === 'signin' ? 'Welcome back 👋' : 'Get started free ✦'}
                 </motion.h2>
@@ -228,21 +222,21 @@ export default function AuthPage() {
                 {/* Social auth */}
                 <div className="flex flex-col gap-3 mb-6">
                   <button onClick={() => handleOAuth('google')}
-                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 dark:border-[#2c3553] rounded-xl dark:text-gray-200 bg-white dark:bg-[#101425] hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-300 dark:hover:border-[#3a466d] hover:shadow-sm">
+                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 rounded-xl bg-white hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm">
                     <GoogleIcon />
                     Continue with Google
                   </button>
                   <button onClick={() => handleOAuth('apple')}
-                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 dark:border-[#2c3553] rounded-xl dark:text-gray-200 bg-white dark:bg-[#101425] hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-300 dark:hover:border-[#3a466d] hover:shadow-sm">
+                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 rounded-xl bg-white hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm">
                     <AppleIcon />
                     Continue with Apple
                   </button>
                 </div>
 
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex-1 h-px bg-gray-100 dark:bg-[#252c46]"/>
-                  <span className="text-xs font-medium text-gray-400 dark:text-gray-500">or with email</span>
-                  <div className="flex-1 h-px bg-gray-100 dark:bg-[#252c46]"/>
+                  <div className="flex-1 h-px bg-gray-100"/>
+                  <span className="text-xs font-medium text-gray-400">or with email</span>
+                  <div className="flex-1 h-px bg-gray-100"/>
                 </div>
 
                 <form onSubmit={handleEmail} className="flex flex-col gap-4">
@@ -254,18 +248,18 @@ export default function AuthPage() {
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <label className="label">Full name</label>
-                        <input className="input" type="text" placeholder="Alex Johnson" value={name} onChange={e => setName(e.target.value)} required/>
+                        <label className="label dark:!text-gray-500">Full name</label>
+                        <input className="input dark:!bg-white dark:!text-gray-900 dark:!border-gray-200 dark:placeholder:!text-gray-400" type="text" placeholder="Alex Johnson" value={name} onChange={e => setName(e.target.value)} required/>
                       </motion.div>
                     )}
                   </AnimatePresence>
                   <div>
-                    <label className="label">Email</label>
-                    <input className="input" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required/>
+                    <label className="label dark:!text-gray-500">Email</label>
+                    <input className="input dark:!bg-white dark:!text-gray-900 dark:!border-gray-200 dark:placeholder:!text-gray-400" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required/>
                   </div>
                   <div>
-                    <label className="label">Password</label>
-                    <input className="input" type="password" placeholder={tab === 'signup' ? 'Min. 8 characters' : '••••••••'} value={password} onChange={e => setPassword(e.target.value)} required minLength={8}/>
+                    <label className="label dark:!text-gray-500">Password</label>
+                    <input className="input dark:!bg-white dark:!text-gray-900 dark:!border-gray-200 dark:placeholder:!text-gray-400" type="password" placeholder={tab === 'signup' ? 'Min. 8 characters' : '••••••••'} value={password} onChange={e => setPassword(e.target.value)} required minLength={8}/>
                   </div>
 
                   {tab === 'signin' && (
@@ -275,7 +269,7 @@ export default function AuthPage() {
                   )}
 
                   {error && (
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-3 py-2 text-xs text-red-500 rounded-lg bg-red-50 dark:bg-red-950/35 dark:text-red-300 border border-red-100 dark:border-red-900/50">
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-3 py-2 text-xs text-red-500 rounded-lg bg-red-50 border border-red-100">
                       {error}
                     </motion.p>
                   )}
@@ -289,7 +283,7 @@ export default function AuthPage() {
                   </button>
                 </form>
 
-                <p className="mt-5 text-xs leading-relaxed text-center text-gray-400 dark:text-gray-500">
+                <p className="mt-5 text-xs leading-relaxed text-center text-gray-400">
                   By continuing you agree to our{' '}
                   <a href="#" className="underline hover:text-brand-500">terms</a>{' '}and{' '}
                   <a href="#" className="underline hover:text-brand-500">privacy policy</a>

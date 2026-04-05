@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <Script id="theme-init" strategy="beforeInteractive">
-          {`(function(){try{var theme=localStorage.getItem('spendwix:theme');document.documentElement.classList.toggle('dark',theme==='dark');}catch(e){}})();`}
+          {`(function(){try{var key='spendwix:theme';var pref=localStorage.getItem(key);if(pref!=='light'&&pref!=='dark'&&pref!=='system'){pref='light';}var dark=pref==='dark'||(pref==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',dark);}catch(e){}})();`}
         </Script>
       </head>
       <body className={`${plusJakarta.className} bg-gray-50 text-gray-900 dark:bg-[#0b1020] dark:text-gray-100 transition-colors duration-300`}>{children}</body>

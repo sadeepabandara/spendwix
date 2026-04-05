@@ -8,9 +8,16 @@ import { useStore } from '@/store'
 import { getLast12Months, getMonthLabel } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
-import ThemeToggle from '@/components/ThemeToggle'
 
 const THEME_STORAGE_KEY = 'spendwix:theme'
+
+function applySavedThemePreference() {
+  if (typeof window === 'undefined') return
+  const pref = window.localStorage.getItem(THEME_STORAGE_KEY)
+  const preference = pref === 'light' || pref === 'dark' || pref === 'system' ? pref : 'light'
+  const shouldUseDark = preference === 'dark' || (preference === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  document.documentElement.classList.toggle('dark', shouldUseDark)
+}
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -44,15 +51,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     })
   }, [])
 
+  useEffect(() => {
+    applySavedThemePreference()
+  }, [])
+
   // Close mobile menu on route change
   useEffect(() => { setMobileMenuOpen(false) }, [pathname])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -94,12 +98,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ── DESKTOP SIDEBAR (lg+) ── */}
       <motion.aside
-        animate={{ width: sidebarOpen ? 224 : 64 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0, width: sidebarOpen ? 224 : 64 }}
+        transition={{
+          width: { type: 'spring', stiffness: 300, damping: 30 },
+          opacity: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
+          x: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
+        }}
         className="hidden lg:flex flex-col border-r border-brand-100 dark:border-[#252c46] bg-white dark:bg-[#0f1428] flex-shrink-0 overflow-hidden z-30"
       >
         <div className="relative flex items-center gap-2.5 px-4 h-16 border-b border-brand-100 dark:border-brand-900/30">
-          <ThemeToggle className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8" />
           <AnimatePresence>
             {sidebarOpen && (
               <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}>
@@ -169,7 +177,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </motion.aside>
 
       {/* Desktop sidebar toggle button */}
-      <button onClick={() => setSidebarOpen(!sidebarOpen)}
+      <motion.button
+        initial={{ opacity: 0, x: -8 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+        onClick={() => setSidebarOpen(!sidebarOpen)}
         className="hidden lg:flex absolute top-[3rem] z-40 w-5 h-8 items-center justify-center rounded-r-lg transition-all"
         style={{
           left: sidebarOpen ? '14rem' : '4rem',
@@ -180,7 +192,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#6b5ce6" strokeWidth="1.5">
           {sidebarOpen ? <path d="M6 2L3 5l3 3"/> : <path d="M3 2l3 3-3 3"/>}
         </svg>
-      </button>
+      </motion.button>
 
       {/* ── TABLET SIDEBAR (md only) - slide-over drawer ── */}
       <AnimatePresence>
@@ -250,13 +262,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </svg>
           </button>
           <Logo/>
-          <div className="flex items-center gap-2">
-            <ThemeToggle className="w-8 h-8" />
-            <select value={currentMonth} onChange={e => setCurrentMonth(e.target.value)}
-              className="text-xs rounded-lg px-2 py-1.5 border border-brand-200 dark:border-brand-800/50 bg-brand-50/50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 focus:outline-none max-w-[110px]">
-              {months.map(m => <option key={m} value={m}>{getMonthLabel(m)}</option>)}
-            </select>
-          </div>
+          <select value={currentMonth} onChange={e => setCurrentMonth(e.target.value)}
+            className="text-xs rounded-lg px-2 py-1.5 border border-brand-200 dark:border-brand-800/50 bg-brand-50/50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 focus:outline-none max-w-[110px]">
+            {months.map(m => <option key={m} value={m}>{getMonthLabel(m)}</option>)}
+          </select>
         </div>
 
         {/* Page content */}
