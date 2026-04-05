@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from '@/store'
 import { useMonthData } from '@/hooks/useMonthData'
 import PageHeader from '@/components/PageHeader'
@@ -218,6 +218,43 @@ export default function UpgradePage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
+  const [statusLoading, setStatusLoading] = useState(false)
+  const [subscriptionStatus, setSubscriptionStatus] = useState<{
+    status: string
+    cancelAtPeriodEnd: boolean
+    currentPeriodEnd: string | null
+  } | null>(null)
+
+  useEffect(() => {
+    const loadSubscriptionStatus = async () => {
+      if (!isPro) {
+        setSubscriptionStatus(null)
+        return
+      }
+
+      setStatusLoading(true)
+      try {
+        const res = await fetch('/api/stripe/subscription-status', { method: 'GET' })
+        const data = await res.json()
+        if (!res.ok || data?.status === 'none') {
+          setSubscriptionStatus(null)
+          return
+        }
+
+        setSubscriptionStatus({
+          status: data.status,
+          cancelAtPeriodEnd: Boolean(data.cancelAtPeriodEnd),
+          currentPeriodEnd: data.currentPeriodEnd || null,
+        })
+      } catch {
+        setSubscriptionStatus(null)
+      } finally {
+        setStatusLoading(false)
+      }
+    }
+
+    loadSubscriptionStatus()
+  }, [isPro])
 
   const handleUpgrade = async () => {
     setCheckoutError('')
@@ -275,7 +312,7 @@ export default function UpgradePage() {
 
       {isPro && (
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-          className="mb-6 rounded-2xl p-4 flex items-center gap-3"
+          className="mb-4 rounded-2xl p-4 flex items-center gap-3"
           style={{ background: 'linear-gradient(135deg,rgba(107,92,230,0.1),rgba(234,92,132,0.08))', border: '1px solid rgba(107,92,230,0.25)' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b5ce6" strokeWidth="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-2">
@@ -289,6 +326,22 @@ export default function UpgradePage() {
             </button>
           </div>
         </motion.div>
+      )}
+
+      {isPro && subscriptionStatus && !statusLoading && (
+        <div className="mb-6 rounded-xl px-4 py-3 border" style={{ borderColor: 'rgba(107,92,230,0.2)', background: 'rgba(107,92,230,0.06)' }}>
+          <p className="text-xs sm:text-sm text-brand-700 dark:text-brand-300 font-medium">
+            {subscriptionStatus.cancelAtPeriodEnd
+              ? 'Your Pro plan is set to cancel at period end.'
+              : 'Your Pro plan is active and will renew automatically.'}
+          </p>
+          {subscriptionStatus.currentPeriodEnd && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {subscriptionStatus.cancelAtPeriodEnd ? 'Access ends on ' : 'Next billing date: '}
+              {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString()}
+            </p>
+          )}
+        </div>
       )}
 
       {/* Billing toggle */}
