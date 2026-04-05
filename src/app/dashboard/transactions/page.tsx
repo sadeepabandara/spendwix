@@ -21,6 +21,8 @@ export default function TransactionsPage() {
 
   const [adding, setAdding] = useState(false)
   const [form, setForm] = useState({ date: currentMonth + '-01', amount: '', category: '', description: '' })
+  const [editId, setEditId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState({ date: '', amount: '', category: '', description: '' })
   const [filter, setFilter] = useState('')
   const [saving, setSaving] = useState(false)
 
@@ -71,6 +73,65 @@ export default function TransactionsPage() {
     await supabase.from('transactions').delete().eq('id', txn.id)
     const match = userCategories.find(c => c.name === txn.category)
     if (match) await supabase.from(match.table).update({ actual: Math.max(0, match.actual - txn.amount) }).eq('id', match.id)
+    reload()
+  }
+
+  const startEdit = (txn: { id: string; date: string; amount: number; category: string; description: string | null }) => {
+    setEditId(txn.id)
+    setEditForm({
+      date: txn.date,
+      amount: String(txn.amount),
+      category: txn.category,
+      description: txn.description || '',
+    })
+  }
+
+  const handleEdit = async (id: string) => {
+    if (!editForm.amount || !editForm.category) return
+
+    const prevTxn = transactions.find(t => t.id === id)
+    if (!prevTxn) return
+
+    setSaving(true)
+    const nextAmount = parseFloat(editForm.amount) || 0
+
+    await supabase.from('transactions').update({
+      date: editForm.date,
+      amount: nextAmount,
+      category: editForm.category,
+      description: editForm.description || null,
+    }).eq('id', id)
+
+    if (prevTxn.category === editForm.category) {
+      const sameCategory = userCategories.find(c => c.name === prevTxn.category)
+      if (sameCategory) {
+        const delta = nextAmount - prevTxn.amount
+        await supabase
+          .from(sameCategory.table)
+          .update({ actual: Math.max(0, sameCategory.actual + delta) })
+          .eq('id', sameCategory.id)
+      }
+    } else {
+      const oldCategory = userCategories.find(c => c.name === prevTxn.category)
+      const newCategory = userCategories.find(c => c.name === editForm.category)
+
+      if (oldCategory) {
+        await supabase
+          .from(oldCategory.table)
+          .update({ actual: Math.max(0, oldCategory.actual - prevTxn.amount) })
+          .eq('id', oldCategory.id)
+      }
+
+      if (newCategory) {
+        await supabase
+          .from(newCategory.table)
+          .update({ actual: newCategory.actual + nextAmount })
+          .eq('id', newCategory.id)
+      }
+    }
+
+    setEditId(null)
+    setSaving(false)
     reload()
   }
 
@@ -172,7 +233,7 @@ export default function TransactionsPage() {
                 <th className="table-header text-right py-2 pb-3 pr-3">Amount</th>
                 <th className="table-header text-left py-2 pb-3 pr-3">Category</th>
                 <th className="table-header text-left py-2 pb-3 pr-3 hidden sm:table-cell">Description</th>
-                <th className="w-16 pr-4 sm:pr-0"/>
+                <th className="w-24 pr-4 sm:pr-0"/>
               </tr>
             </thead>
             <tbody>
@@ -182,23 +243,92 @@ export default function TransactionsPage() {
                     initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
                     transition={{ duration: 0.18, delay: i * 0.025 }}
                     className="border-b border-brand-50 dark:border-brand-900/20 hover:bg-brand-50/30 dark:hover:bg-brand-900/10 group">
-                    <td className="py-3 pr-3 text-xs sm:text-sm text-gray-500 pl-4 sm:pl-0 whitespace-nowrap">{txn.date}</td>
-                    <td className="py-3 pr-3 text-xs sm:text-sm font-semibold text-right whitespace-nowrap" style={{ color: '#ea5c84' }}>
-                      -{formatCurrency(txn.amount, currency)}
-                    </td>
-                    <td className="py-3 pr-3">
-                      <span className="text-xs px-2 py-1 rounded-lg font-medium whitespace-nowrap"
-                        style={{ background: 'rgba(107,92,230,0.1)', color: '#6b5ce6' }}>
-                        {txn.category}
-                      </span>
-                    </td>
-                    <td className="py-3 pr-3 text-xs sm:text-sm text-gray-500 hidden sm:table-cell">{txn.description || '—'}</td>
-                    <td className="py-3 pr-4 sm:pr-0">
-                      <button onClick={() => handleDelete({ id: txn.id, category: txn.category, amount: txn.amount })}
-                        className="btn-danger opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                        Del
-                      </button>
-                    </td>
+                    {editId === txn.id ? (
+                      <>
+                        <td className="py-2 pr-3 pl-4 sm:pl-0">
+                          <input
+                            className="input text-xs py-1.5"
+                            type="date"
+                            value={editForm.date}
+                            onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))}
+                          />
+                        </td>
+                        <td className="py-2 pr-3">
+                          <input
+                            className="input text-xs py-1.5 text-right"
+                            type="number"
+                            step="0.01"
+                            value={editForm.amount}
+                            onChange={e => setEditForm(f => ({ ...f, amount: e.target.value }))}
+                          />
+                        </td>
+                        <td className="py-2 pr-3">
+                          <select
+                            className="input text-xs py-1.5"
+                            value={editForm.category}
+                            onChange={e => setEditForm(f => ({ ...f, category: e.target.value }))}
+                          >
+                            <option value="">Select category...</option>
+                            {bills.length > 0 && <optgroup label="Bills">{bills.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}</optgroup>}
+                            {expenses.length > 0 && <optgroup label="Expenses">{expenses.map(e => <option key={e.id} value={e.name}>{e.name}</option>)}</optgroup>}
+                            {savings.length > 0 && <optgroup label="Savings">{savings.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}</optgroup>}
+                            {debt.length > 0 && <optgroup label="Debt">{debt.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}</optgroup>}
+                          </select>
+                        </td>
+                        <td className="py-2 pr-3 hidden sm:table-cell">
+                          <input
+                            className="input text-xs py-1.5"
+                            value={editForm.description}
+                            onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                          />
+                        </td>
+                        <td className="py-2 pr-4 sm:pr-0">
+                          <div className="flex gap-1.5 justify-end">
+                            <button
+                              onClick={() => handleEdit(txn.id)}
+                              disabled={saving || !editForm.amount || !editForm.category}
+                              className="px-2 py-1 text-xs btn-primary disabled:opacity-50"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditId(null)}
+                              className="px-2 py-1 text-xs btn-secondary"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="py-3 pr-3 text-xs sm:text-sm text-gray-500 pl-4 sm:pl-0 whitespace-nowrap">{txn.date}</td>
+                        <td className="py-3 pr-3 text-xs sm:text-sm font-semibold text-right whitespace-nowrap" style={{ color: '#ea5c84' }}>
+                          -{formatCurrency(txn.amount, currency)}
+                        </td>
+                        <td className="py-3 pr-3">
+                          <span className="text-xs px-2 py-1 rounded-lg font-medium whitespace-nowrap"
+                            style={{ background: 'rgba(107,92,230,0.1)', color: '#6b5ce6' }}>
+                            {txn.category}
+                          </span>
+                        </td>
+                        <td className="py-3 pr-3 text-xs sm:text-sm text-gray-500 hidden sm:table-cell">{txn.description || '—'}</td>
+                        <td className="py-3 pr-4 sm:pr-0">
+                          <div className="flex gap-1.5 justify-end opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => startEdit(txn)}
+                              className="px-2 py-1 text-xs btn-secondary"
+                            >
+                              Edit
+                            </button>
+                            <button onClick={() => handleDelete({ id: txn.id, category: txn.category, amount: txn.amount })}
+                              className="btn-danger">
+                              Del
+                            </button>
+                          </div>
+                        </td>
+                      </>
+                    )}
                   </motion.tr>
                 ))}
               </AnimatePresence>
