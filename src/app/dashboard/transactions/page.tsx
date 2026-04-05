@@ -153,7 +153,7 @@ export default function TransactionsPage() {
         <StatCard label="Average" value={txnCount ? formatCurrency(totalSpent / txnCount, currency) : formatCurrency(0, currency)}/>
       </div>
 
-      <div className="card p-4 sm:p-6">
+      <div className="card p-4 sm:p-6 bg-white/95 dark:bg-[#13182a] border border-gray-100 dark:border-[#252c46]">
         {/* Header row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <h2 className="section-title mb-0">All transactions</h2>
@@ -169,7 +169,7 @@ export default function TransactionsPage() {
 
         {/* No categories notice */}
         {userCategories.length === 0 && (
-          <div className="mb-4 p-4 rounded-xl border border-brand-200 dark:border-brand-800/50 bg-brand-50/50 dark:bg-brand-900/20">
+          <div className="mb-4 p-4 rounded-xl border border-brand-200 dark:border-[#2c3553] bg-brand-50/50 dark:bg-[#101425]">
             <p className="text-sm text-brand-700 dark:text-brand-300 font-medium mb-0.5">Set up budget categories first</p>
             <p className="text-xs text-brand-600/70 dark:text-brand-400/70">Add entries to Bills, Expenses, Savings or Debt — categories come from those tables.</p>
           </div>
@@ -180,8 +180,8 @@ export default function TransactionsPage() {
           {adding && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }} className="overflow-hidden">
-              <div className="p-4 mb-5 rounded-xl border border-brand-200 dark:border-brand-800/40"
-                style={{ background: 'linear-gradient(135deg,rgba(107,92,230,0.04),rgba(234,92,132,0.03))' }}>
+              <div className="p-4 mb-5 rounded-xl border border-brand-200 dark:border-[#2c3553]"
+                style={{ background: 'linear-gradient(135deg,rgba(107,92,230,0.05),rgba(234,92,132,0.04))' }}>
                 <p className="text-xs font-semibold mb-3" style={{ color: '#6b5ce6' }}>New transaction</p>
                 {/* Responsive form grid: 1 col mobile, 2 col tablet, 4 col desktop */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -228,7 +228,7 @@ export default function TransactionsPage() {
         <div className="overflow-x-auto -mx-4 sm:mx-0">
           <table className="w-full min-w-[480px]">
             <thead>
-              <tr className="border-b border-brand-100 dark:border-brand-900/30">
+              <tr className="border-b border-brand-100 dark:border-[#252c46]">
                 <th className="table-header text-left py-2 pb-3 pl-4 sm:pl-0 pr-3">Date</th>
                 <th className="table-header text-right py-2 pb-3 pr-3">Amount</th>
                 <th className="table-header text-left py-2 pb-3 pr-3">Category</th>
@@ -242,7 +242,7 @@ export default function TransactionsPage() {
                   <motion.tr key={txn.id}
                     initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
                     transition={{ duration: 0.18, delay: i * 0.025 }}
-                    className="border-b border-brand-50 dark:border-brand-900/20 hover:bg-brand-50/30 dark:hover:bg-brand-900/10 group">
+                    className="border-b border-brand-50 dark:border-[#20263d] hover:bg-brand-50/30 dark:hover:bg-white/5 group">
                     {editId === txn.id ? (
                       <>
                         <td className="py-2 pr-3 pl-4 sm:pl-0">

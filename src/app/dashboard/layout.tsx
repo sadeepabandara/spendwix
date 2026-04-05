@@ -8,6 +8,9 @@ import { useStore } from '@/store'
 import { getLast12Months, getMonthLabel } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
+import ThemeToggle from '@/components/ThemeToggle'
+
+const THEME_STORAGE_KEY = 'spendwix:theme'
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -43,6 +46,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Close mobile menu on route change
   useEffect(() => { setMobileMenuOpen(false) }, [pathname])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -80,15 +90,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0e0c1a]">
+    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0b1020]">
 
       {/* ── DESKTOP SIDEBAR (lg+) ── */}
       <motion.aside
         animate={{ width: sidebarOpen ? 224 : 64 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="hidden lg:flex flex-col border-r border-brand-100 dark:border-brand-900/30 bg-white dark:bg-[#110f1e] flex-shrink-0 overflow-hidden z-30"
+        className="hidden lg:flex flex-col border-r border-brand-100 dark:border-[#252c46] bg-white dark:bg-[#0f1428] flex-shrink-0 overflow-hidden z-30"
       >
-        <div className="flex items-center gap-2.5 px-4 h-16 border-b border-brand-100 dark:border-brand-900/30">
+        <div className="relative flex items-center gap-2.5 px-4 h-16 border-b border-brand-100 dark:border-brand-900/30">
+          <ThemeToggle className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8" />
           <AnimatePresence>
             {sidebarOpen && (
               <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}>
@@ -181,7 +192,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <motion.div
               initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-72 bg-white dark:bg-[#110f1e] border-r border-brand-100 dark:border-brand-900/30 flex flex-col shadow-2xl"
+              className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-72 bg-white dark:bg-[#0f1428] border-r border-brand-100 dark:border-[#252c46] flex flex-col shadow-2xl"
             >
               {/* Drawer header */}
               <div className="flex items-center justify-between h-16 px-5 border-b border-brand-100 dark:border-brand-900/30">
@@ -231,7 +242,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
 
         {/* Mobile/Tablet top bar */}
-        <div className="lg:hidden flex items-center justify-between px-4 h-14 bg-white dark:bg-[#110f1e] border-b border-brand-100 dark:border-brand-900/30 flex-shrink-0 z-20">
+        <div className="lg:hidden flex items-center justify-between px-4 h-14 bg-white dark:bg-[#0f1428] border-b border-brand-100 dark:border-[#252c46] flex-shrink-0 z-20">
           <button onClick={() => setMobileMenuOpen(true)}
             className="flex items-center justify-center text-gray-500 transition-colors w-9 h-9 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/30">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -239,10 +250,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </svg>
           </button>
           <Logo/>
-          <select value={currentMonth} onChange={e => setCurrentMonth(e.target.value)}
-            className="text-xs rounded-lg px-2 py-1.5 border border-brand-200 dark:border-brand-800/50 bg-brand-50/50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 focus:outline-none max-w-[110px]">
-            {months.map(m => <option key={m} value={m}>{getMonthLabel(m)}</option>)}
-          </select>
+          <div className="flex items-center gap-2">
+            <ThemeToggle className="w-8 h-8" />
+            <select value={currentMonth} onChange={e => setCurrentMonth(e.target.value)}
+              className="text-xs rounded-lg px-2 py-1.5 border border-brand-200 dark:border-brand-800/50 bg-brand-50/50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 focus:outline-none max-w-[110px]">
+              {months.map(m => <option key={m} value={m}>{getMonthLabel(m)}</option>)}
+            </select>
+          </div>
         </div>
 
         {/* Page content */}
@@ -259,7 +273,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
 
         {/* ── MOBILE BOTTOM NAV (sm only) ── */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-[#110f1e] border-t border-brand-100 dark:border-brand-900/30"
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-[#0f1428] border-t border-brand-100 dark:border-[#252c46]"
           style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="flex items-center justify-around h-16 px-2">
             {BOTTOM_NAV.map(({ href, label, icon }) => {

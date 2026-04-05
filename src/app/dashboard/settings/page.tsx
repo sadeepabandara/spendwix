@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useStore } from '@/store'
 import { useMonthData } from '@/hooks/useMonthData'
 import { supabase } from '@/lib/supabase'
-import { CURRENCY_LABELS, Currency } from '@/types'
+import { CURRENCY_OPTIONS, Currency } from '@/types'
 import PageHeader from '@/components/PageHeader'
 
 export default function SettingsPage() {
@@ -79,7 +79,7 @@ export default function SettingsPage() {
           <div>
             <label className="label">Currency</label>
             <select className="input" value={currency} onChange={e => setCurrency(e.target.value as Currency)}>
-              {Object.entries(CURRENCY_LABELS).map(([k, v]) => (
+              {CURRENCY_OPTIONS.map(([k, v]) => (
                 <option key={k} value={k}>{v}</option>
               ))}
             </select>

@@ -103,7 +103,7 @@ export default function IncomePage() {
           color={diff >= 0 ? 'green' : 'red'}/>
       </div>
 
-      <div className="p-6 card">
+      <div className="p-6 card bg-white/95 dark:bg-[#13182a] border border-gray-100 dark:border-[#252c46]">
         <div className="flex items-center justify-between mb-5">
           <h2 className="mb-0 section-title">Income sources</h2>
           <button onClick={() => setAdding(true)} className="btn-primary flex items-center gap-1.5 text-xs">
@@ -115,7 +115,7 @@ export default function IncomePage() {
         <div className="overflow-x-auto -mx-4 sm:mx-0 sm:rounded-xl">
           <table className="w-full min-w-[560px]">
             <thead>
-              <tr className="border-b border-gray-100 dark:border-gray-800">
+              <tr className="border-b border-gray-100 dark:border-[#252c46]">
                 {['Name','Payday','Start day','Expected','Actual','Diff',''].map(h => (
                   <th
                     key={h}
@@ -135,7 +135,7 @@ export default function IncomePage() {
             </thead>
             <tbody>
               {income.map(row => (
-                <tr key={row.id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50/50 dark:hover:bg-gray-800/20 group">
+                <tr key={row.id} className="border-b border-gray-50 dark:border-[#20263d] hover:bg-gray-50/50 dark:hover:bg-white/5 group">
                   {editId === row.id ? (
                     <>
                       <td className="py-2 pr-2"><input className="input py-1.5 text-xs" value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}/></td>
@@ -173,7 +173,7 @@ export default function IncomePage() {
               ))}
 
               {adding && (
-                <tr className="border-b border-brand-100 dark:border-brand-900 bg-brand-50/30 dark:bg-brand-950/20">
+                <tr className="border-b border-brand-100 dark:border-[#252c46] bg-brand-50/30 dark:bg-[#101425]">
                   <td className="py-2 pr-2"><input autoFocus className="input py-1.5 text-xs" placeholder="Paycheck" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}/></td>
                   <td className="py-2 pr-2"><input className="input py-1.5 text-xs" type="date" value={form.payday} onChange={e => setForm(f => ({ ...f, payday: e.target.value }))}/></td>
                   <td className="py-2 pr-2"><input className="input py-1.5 text-xs" type="date" value={form.start_day} onChange={e => setForm(f => ({ ...f, start_day: e.target.value }))}/></td>

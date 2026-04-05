@@ -6,30 +6,46 @@
   :root {
     --brand: #6b5ce6;
     --accent: #ea5c84;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --border-subtle: #e5e7eb;
+    --tooltip-bg: #ffffff;
+    --tooltip-border: #e5e7eb;
+    --tooltip-text: #111827;
   }
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-gray-50 text-gray-900 antialiased transition-colors duration-300;
   }
   .dark body {
-    @apply bg-gray-950 text-gray-100;
+    background:
+      radial-gradient(circle at top left, rgba(107, 92, 230, 0.12), transparent 28%),
+      radial-gradient(circle at top right, rgba(234, 92, 132, 0.10), transparent 24%),
+      #0b1020;
+    color: #f8fafc;
+    --surface: #13182a;
+    --surface-2: #101425;
+    --border-subtle: #252c46;
+    --tooltip-bg: #101425;
+    --tooltip-border: #2c3553;
+    --tooltip-text: #e5e7eb;
   }
 }
 
 @layer components {
   .card {
-    @apply bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl;
+    @apply bg-white dark:bg-[#13182a] border border-gray-100 dark:border-[#262c44] rounded-2xl shadow-sm dark:shadow-[0_18px_60px_rgba(3,7,18,0.35)];
   }
   .btn-primary {
-    @apply bg-gradient-to-r from-brand-500 to-accent-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-sm;
+    @apply bg-gradient-to-r from-brand-500 to-accent-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-sm dark:shadow-[0_10px_24px_rgba(107,92,230,0.25)];
   }
   .btn-secondary {
-    @apply bg-transparent border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors;
+    @apply bg-white/80 dark:bg-white/5 border border-gray-200 dark:border-[#2c3553] text-gray-700 dark:text-gray-200 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/10 transition-colors;
   }
   .btn-danger {
     @apply bg-transparent border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-50 dark:hover:bg-red-950 transition-colors;
   }
   .input {
-    @apply w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition;
+    @apply w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-[#2c3553] bg-white dark:bg-[#101425] text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition shadow-sm;
   }
   .label {
     @apply block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5;
@@ -50,16 +66,16 @@
     @apply text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide;
   }
   .progress-bar {
-    @apply h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden;
+    @apply h-1.5 rounded-full bg-gray-100 dark:bg-[#1a2033] overflow-hidden;
   }
   .progress-fill {
     @apply h-full rounded-full transition-all duration-300;
   }
   .badge-pro {
-    @apply inline-flex items-center gap-1 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 border border-brand-200 dark:border-brand-800 text-xs font-medium px-2 py-0.5 rounded-full;
+    @apply inline-flex items-center gap-1 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 text-xs font-medium px-2 py-0.5 rounded-full;
   }
   .badge-free {
-    @apply inline-flex items-center bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium px-2 py-0.5 rounded-full;
+    @apply inline-flex items-center bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 border border-transparent dark:border-white/10 text-xs font-medium px-2 py-0.5 rounded-full;
   }
 }
 

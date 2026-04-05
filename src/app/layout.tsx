@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import './globals.css'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 
@@ -24,7 +25,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={plusJakarta.className}>{children}</body>
+      <head>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){try{var theme=localStorage.getItem('spendwix:theme');document.documentElement.classList.toggle('dark',theme==='dark');}catch(e){}})();`}
+        </Script>
+      </head>
+      <body className={`${plusJakarta.className} bg-gray-50 text-gray-900 dark:bg-[#0b1020] dark:text-gray-100 transition-colors duration-300`}>{children}</body>
     </html>
   )
 }

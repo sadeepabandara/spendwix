@@ -85,6 +85,22 @@ export const CURRENCY_LABELS: Record<Currency, string> = {
   ZAR: 'South African Rand (ZAR)', ZMW: 'Zambian Kwacha (ZMW)', ZWL: 'Zimbabwean Dollar (ZWL)'
 }
 
+const NON_COUNTRY_CURRENCY_CODES = new Set<Currency>([
+  // Fund, unit-of-account, commodity, testing, supranational, and regional-only codes.
+  'CHE', 'CHW', 'CLF', 'COU', 'MXV', 'USN', 'UYI', 'UYW', 'VED',
+  'XAF', 'XAG', 'XAU', 'XBA', 'XBB', 'XBC', 'XBD', 'XCD', 'XDR', 'XOF', 'XPD', 'XPF', 'XPT', 'XSU', 'XTS', 'XUA', 'XXX',
+  // Not tied to a single country.
+  'EUR',
+])
+
+export const CURRENCY_OPTIONS = (Object.entries(CURRENCY_LABELS) as [Currency, string][])
+  .filter(([code]) => !NON_COUNTRY_CURRENCY_CODES.has(code))
+  .sort(([codeA, labelA], [codeB, labelB]) => {
+    const countryA = labelA.replace(/\s*\([A-Z]{3}\)$/, '').toLowerCase()
+    const countryB = labelB.replace(/\s*\([A-Z]{3}\)$/, '').toLowerCase()
+    return countryA.localeCompare(countryB) || codeA.localeCompare(codeB)
+  })
+
 export type Plan = 'free' | 'pro'
 
 export interface Profile {

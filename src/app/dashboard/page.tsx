@@ -78,16 +78,20 @@ export default function DashboardPage() {
         className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
 
         {/* Bar chart */}
-        <div className="card p-4 sm:p-5">
+        <div className="card p-4 sm:p-5 bg-white/95 dark:bg-[#13182a] border border-gray-100 dark:border-[#252c46]">
           <h3 className="section-title text-xs sm:text-sm">Budget vs actual</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={budgetVsActual} barSize={18} barGap={3}>
-              <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false}/>
-              <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} width={48}
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'var(--tooltip-text)' }} axisLine={false} tickLine={false}/>
+              <YAxis tick={{ fontSize: 10, fill: 'var(--tooltip-text)' }} axisLine={false} tickLine={false} width={48}
                 tickFormatter={v => formatCurrency(v, currency).replace(/\.00$/, '')}/>
-              <Tooltip cursor={{ fill: 'rgba(107,92,230,0.05)' }}
-                contentStyle={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: 10, fontSize: 11 }}
-                formatter={(v: number) => formatCurrency(v, currency)}/>
+              <Tooltip
+                cursor={{ fill: 'rgba(107,92,230,0.08)' }}
+                contentStyle={{ background: 'var(--tooltip-bg)', border: '1px solid var(--tooltip-border)', borderRadius: 12, fontSize: 11 }}
+                labelStyle={{ color: 'var(--tooltip-text)' }}
+                itemStyle={{ color: 'var(--tooltip-text)' }}
+                formatter={(v: number) => formatCurrency(v, currency)}
+              />
               <Bar dataKey="budget" fill="#6b5ce6" radius={[4,4,0,0]} name="Budget"/>
               <Bar dataKey="actual" fill="#ea5c84" radius={[4,4,0,0]} name="Actual"/>
             </BarChart>
@@ -102,7 +106,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Pie chart */}
-        <div className="card p-4 sm:p-5">
+        <div className="card p-4 sm:p-5 bg-white/95 dark:bg-[#13182a] border border-gray-100 dark:border-[#252c46]">
           <h3 className="section-title text-xs sm:text-sm">Where money goes</h3>
           {spendingPie.length > 0 ? (
             <div className="flex items-center gap-4">
@@ -111,7 +115,12 @@ export default function DashboardPage() {
                   <Pie data={spendingPie} dataKey="value" cx={65} cy={65} innerRadius={35} outerRadius={60} paddingAngle={2}>
                     {spendingPie.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]}/>)}
                   </Pie>
-                  <Tooltip formatter={(v: number) => formatCurrency(v, currency)} contentStyle={{ fontSize: 11, borderRadius: 10 }}/>
+                  <Tooltip
+                    formatter={(v: number) => formatCurrency(v, currency)}
+                    contentStyle={{ background: 'var(--tooltip-bg)', border: '1px solid var(--tooltip-border)', fontSize: 11, borderRadius: 12 }}
+                    labelStyle={{ color: 'var(--tooltip-text)' }}
+                    itemStyle={{ color: 'var(--tooltip-text)' }}
+                  />
                 </PieChart>
               </div>
               <div className="flex-1 min-w-0 space-y-1.5">
@@ -134,7 +143,7 @@ export default function DashboardPage() {
 
       {/* Budget overview bars */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.36 }}
-        className="card p-4 sm:p-5 mb-5">
+        className="card p-4 sm:p-5 mb-5 bg-white/95 dark:bg-[#13182a] border border-gray-100 dark:border-[#252c46]">
         <h3 className="section-title">Budget overview</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
           {budgetVsActual.map(item => {
@@ -161,7 +170,7 @@ export default function DashboardPage() {
 
       {/* Recent transactions */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.44 }}
-        className="card p-4 sm:p-5">
+        className="card p-4 sm:p-5 bg-white/95 dark:bg-[#13182a] border border-gray-100 dark:border-[#252c46]">
         <div className="flex items-center justify-between mb-4">
           <h3 className="section-title mb-0">Recent transactions</h3>
           <a href="/dashboard/transactions" className="text-xs text-brand-600 dark:text-brand-400 hover:underline">View all</a>
@@ -169,7 +178,7 @@ export default function DashboardPage() {
         {recentTxns.length > 0 ? (
           <div className="space-y-0">
             {recentTxns.map(txn => (
-              <div key={txn.id} className="flex items-center justify-between py-3 border-b border-gray-50 dark:border-gray-800/50 last:border-0">
+              <div key={txn.id} className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-[#252c46] last:border-0">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ background: 'linear-gradient(135deg, #6b5ce6, #ea5c84)' }}>

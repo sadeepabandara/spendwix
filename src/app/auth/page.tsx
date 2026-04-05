@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import ThemeToggle from '@/components/ThemeToggle'
+
+const THEME_STORAGE_KEY = 'spendwix:theme'
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +41,13 @@ export default function AuthPage() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const router = useRouter()
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
+      document.documentElement.classList.add('dark')
+    }
+  }, [])
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,33 +92,35 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen p-3 overflow-hidden sm:p-4" style={{ background: '#0e0b1f' }}>
+    <div className="relative flex items-center justify-center min-h-screen p-3 overflow-hidden sm:p-4 bg-gray-50 dark:bg-[#0e0b1f]">
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle className="w-10 h-10" />
+      </div>
 
       {/* Animated background blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute rounded-full -top-32 -left-32 w-96 h-96 opacity-30 blur-3xl animate-pulse" style={{ background: 'radial-gradient(circle, #6b5ce6, transparent 70%)' }}/>
-        <div className="absolute rounded-full opacity-25 top-1/2 -right-32 w-80 h-80 blur-3xl animate-pulse" style={{ background: 'radial-gradient(circle, #ea5c84, transparent 70%)', animationDelay: '1s' }}/>
-        <div className="absolute rounded-full -bottom-20 left-1/3 w-72 h-72 opacity-20 blur-3xl animate-pulse" style={{ background: 'radial-gradient(circle, #a99af3, transparent 70%)', animationDelay: '2s' }}/>
+        <div className="absolute rounded-full -top-32 -left-32 w-96 h-96 opacity-20 blur-3xl animate-pulse bg-[radial-gradient(circle,_rgba(107,92,230,0.22),_transparent_70%)] dark:bg-[radial-gradient(circle,_#6b5ce6,_transparent_70%)]"/>
+        <div className="absolute rounded-full opacity-20 top-1/2 -right-32 w-80 h-80 blur-3xl animate-pulse bg-[radial-gradient(circle,_rgba(234,92,132,0.18),_transparent_70%)] dark:bg-[radial-gradient(circle,_#ea5c84,_transparent_70%)]" style={{ animationDelay: '1s' }}/>
+        <div className="absolute rounded-full -bottom-20 left-1/3 w-72 h-72 opacity-15 blur-3xl animate-pulse bg-[radial-gradient(circle,_rgba(169,154,243,0.2),_transparent_70%)] dark:bg-[radial-gradient(circle,_#a99af3,_transparent_70%)]" style={{ animationDelay: '2s' }}/>
       </div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.45, ease: 'easeOut' }}
-        className="relative z-10 grid w-full max-w-4xl grid-cols-1 overflow-hidden shadow-2xl md:grid-cols-2 rounded-2xl sm:rounded-3xl"
-        style={{ border: '1px solid rgba(107,92,230,0.3)' }}
+        className="relative z-10 grid w-full max-w-4xl grid-cols-1 overflow-hidden shadow-2xl md:grid-cols-2 rounded-2xl sm:rounded-3xl border border-brand-200/70 dark:border-brand-800/40"
       >
 
         {/* Left panel */}
-        <div className="relative p-6 sm:p-10 md:flex hidden flex-col justify-between min-h-[480px] sm:min-h-[300px] lg:min-h-[580px] overflow-hidden" style={{ background: 'linear-gradient(135deg, #120e2e 0%, #1e1540 50%, #2a1550 100%)' }}>
+        <div className="relative p-6 sm:p-10 md:flex hidden flex-col justify-between min-h-[480px] sm:min-h-[300px] lg:min-h-[580px] overflow-hidden bg-gradient-to-br from-[#f7f5ff] via-[#efeaff] to-[#e7dfff] dark:from-[#120e2e] dark:via-[#1e1540] dark:to-[#2a1550]">
           {/* Decorative grid */}
-          <div className="absolute inset-0 opacity-10" style={{
+          <div className="absolute inset-0 opacity-[0.08] dark:opacity-10" style={{
             backgroundImage: 'linear-gradient(rgba(107,92,230,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(107,92,230,0.4) 1px,transparent 1px)',
             backgroundSize: '40px 40px'
           }}/>
 
           {/* Glow orb */}
-          <div className="absolute right-0 w-48 h-48 rounded-full top-1/4 blur-3xl opacity-40" style={{ background: 'radial-gradient(circle, #ea5c84, transparent 70%)' }}/>
+          <div className="absolute right-0 w-48 h-48 rounded-full top-1/4 blur-3xl opacity-25 dark:opacity-40" style={{ background: 'radial-gradient(circle, #ea5c84, transparent 70%)' }}/>
 
           {/* Logo */}
           <div className="relative flex items-center gap-2.5">
@@ -125,40 +137,40 @@ export default function AuthPage() {
 
           {/* Main copy */}
           <div className="relative">
-            <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold rounded-full" style={{ background: 'rgba(107,92,230,0.25)', color: '#a99af3', border: '1px solid rgba(107,92,230,0.4)' }}>
+            <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold rounded-full bg-brand-100/80 text-brand-700 border border-brand-200 dark:bg-brand-950/50 dark:text-brand-300 dark:border-brand-800/50">
               ✦ Budget smarter, live freer
             </div>
-            <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-white">
+            <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
               Your money,<br/>
-              <span style={{ background: 'linear-gradient(90deg, #6b5ce6, #ea5c84)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <span className="bg-gradient-to-r from-brand-500 to-accent-500 bg-clip-text text-transparent">
                 under control.
               </span>
             </h1>
-            <p className="max-w-xs text-sm leading-relaxed" style={{ color: '#8b83b8' }}>
+            <p className="max-w-xs text-sm leading-relaxed text-gray-600 dark:text-[#8b83b8]">
               Track income, bills, expenses, savings and debt — all in one clean dashboard built for your generation.
             </p>
 
             <div className="grid grid-cols-3 gap-4 mt-8">
               {[['$0','to start'],['2 min','setup'],['100%','private']].map(([val, lbl]) => (
-                <div key={lbl} className="p-3 text-center rounded-2xl" style={{ background: 'rgba(107,92,230,0.12)', border: '1px solid rgba(107,92,230,0.2)' }}>
-                  <div className="text-lg font-bold text-white">{val}</div>
-                  <div className="text-xs mt-0.5" style={{ color: '#8b83b8' }}>{lbl}</div>
+                <div key={lbl} className="p-3 text-center rounded-2xl bg-white/80 border border-brand-200/70 dark:bg-brand-950/20 dark:border-brand-800/40">
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">{val}</div>
+                  <div className="text-xs mt-0.5 text-gray-500 dark:text-[#8b83b8]">{lbl}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quote */}
-          <div className="relative pt-5" style={{ borderTop: '1px solid rgba(107,92,230,0.2)' }}>
-            <p className="text-xs italic" style={{ color: '#6b63a0' }}>
+          <div className="relative pt-5 border-t border-brand-200/70 dark:border-brand-800/30">
+            <p className="text-xs italic text-gray-600 dark:text-[#6b63a0]">
               &quot;Finally a budget app that doesn&apos;t feel overwhelming.&quot;
             </p>
-            <p className="mt-1 text-xs" style={{ color: '#4a4572' }}>— Early user</p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-[#4a4572]">— Early user</p>
           </div>
         </div>
 
         {/* Right panel */}
-        <div className="flex flex-col justify-center p-6 bg-white sm:p-10 dark:bg-gray-900">
+        <div className="flex flex-col justify-center p-6 bg-white sm:p-10 dark:bg-[#13182a]">
           <AnimatePresence mode="wait">
             {message ? (
               <motion.div
@@ -186,7 +198,7 @@ export default function AuthPage() {
                 transition={{ duration: 0.28 }}
               >
                 {/* Tab toggle */}
-                <div className="flex p-1 mb-7 rounded-xl" style={{ background: '#f5f4ff' }}>
+                <div className="flex p-1 mb-7 rounded-xl bg-brand-50 dark:bg-[#101425] border border-brand-100 dark:border-[#252c46]">
                   {(['signin','signup'] as const).map(t => (
                     <button key={t} onClick={() => { setTab(t); setError('') }}
                       className="flex-1 py-2.5 text-sm rounded-lg font-semibold transition-all"
@@ -194,7 +206,7 @@ export default function AuthPage() {
                         background: 'linear-gradient(135deg,#6b5ce6,#ea5c84)',
                         color: 'white',
                         boxShadow: '0 2px 12px rgba(107,92,230,0.35)'
-                      } : { color: '#9896b8' }}
+                      } : { color: '#8b95b7' }}
                     >
                       {t === 'signin' ? 'Sign in' : 'Create account'}
                     </button>
@@ -216,21 +228,21 @@ export default function AuthPage() {
                 {/* Social auth */}
                 <div className="flex flex-col gap-3 mb-6">
                   <button onClick={() => handleOAuth('google')}
-                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 dark:border-gray-700 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 hover:shadow-sm">
+                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 dark:border-[#2c3553] rounded-xl dark:text-gray-200 bg-white dark:bg-[#101425] hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-300 dark:hover:border-[#3a466d] hover:shadow-sm">
                     <GoogleIcon />
                     Continue with Google
                   </button>
                   <button onClick={() => handleOAuth('apple')}
-                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 dark:border-gray-700 rounded-xl dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 hover:shadow-sm">
+                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 dark:border-[#2c3553] rounded-xl dark:text-gray-200 bg-white dark:bg-[#101425] hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-300 dark:hover:border-[#3a466d] hover:shadow-sm">
                     <AppleIcon />
                     Continue with Apple
                   </button>
                 </div>
 
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800"/>
-                  <span className="text-xs font-medium text-gray-400">or with email</span>
-                  <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800"/>
+                  <div className="flex-1 h-px bg-gray-100 dark:bg-[#252c46]"/>
+                  <span className="text-xs font-medium text-gray-400 dark:text-gray-500">or with email</span>
+                  <div className="flex-1 h-px bg-gray-100 dark:bg-[#252c46]"/>
                 </div>
 
                 <form onSubmit={handleEmail} className="flex flex-col gap-4">
@@ -263,7 +275,7 @@ export default function AuthPage() {
                   )}
 
                   {error && (
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-3 py-2 text-xs text-red-500 rounded-lg bg-red-50">
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-3 py-2 text-xs text-red-500 rounded-lg bg-red-50 dark:bg-red-950/35 dark:text-red-300 border border-red-100 dark:border-red-900/50">
                       {error}
                     </motion.p>
                   )}
@@ -277,7 +289,7 @@ export default function AuthPage() {
                   </button>
                 </form>
 
-                <p className="mt-5 text-xs leading-relaxed text-center text-gray-400">
+                <p className="mt-5 text-xs leading-relaxed text-center text-gray-400 dark:text-gray-500">
                   By continuing you agree to our{' '}
                   <a href="#" className="underline hover:text-brand-500">terms</a>{' '}and{' '}
                   <a href="#" className="underline hover:text-brand-500">privacy policy</a>
