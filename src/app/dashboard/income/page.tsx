@@ -117,7 +117,19 @@ export default function IncomePage() {
             <thead>
               <tr className="border-b border-gray-100 dark:border-gray-800">
                 {['Name','Payday','Start day','Expected','Actual','Diff',''].map(h => (
-                  <th key={h} className={clsx('table-header py-2 pb-3', h === '' ? 'w-20' : h === 'Expected' || h === 'Actual' || h === 'Diff' ? 'text-right' : 'text-left')}>{h}</th>
+                  <th
+                    key={h}
+                    className={clsx(
+                      'table-header py-2 pb-3',
+                      h === ''
+                        ? 'w-20'
+                        : h === 'Expected' || h === 'Actual' || h === 'Diff'
+                          ? 'text-right pr-2'
+                          : 'text-left pr-2'
+                    )}
+                  >
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>

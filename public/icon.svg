@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6b5ce6"/>
+      <stop offset="100%" stop-color="#ea5c84"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="116" fill="url(#g)"/>
+  <!-- Bar chart with upward arrow — represents growth & tracking -->
+  <rect x="100" y="320" width="72" height="124" rx="16" fill="white" fill-opacity="0.45"/>
+  <rect x="220" y="254" width="72" height="190" rx="16" fill="white" fill-opacity="0.68"/>
+  <rect x="340" y="160" width="72" height="284" rx="16" fill="white"/>
+  <!-- Arrow tip on last bar -->
+  <path d="M351 148 L376 112 L401 148" fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

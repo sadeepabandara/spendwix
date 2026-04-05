@@ -168,10 +168,10 @@ export default function TransactionsPage() {
           <table className="w-full min-w-[480px]">
             <thead>
               <tr className="border-b border-brand-100 dark:border-brand-900/30">
-                <th className="table-header text-left py-2 pb-3 pl-4 sm:pl-0">Date</th>
-                <th className="table-header text-right py-2 pb-3">Amount</th>
-                <th className="table-header text-left py-2 pb-3">Category</th>
-                <th className="table-header text-left py-2 pb-3 hidden sm:table-cell">Description</th>
+                <th className="table-header text-left py-2 pb-3 pl-4 sm:pl-0 pr-3">Date</th>
+                <th className="table-header text-right py-2 pb-3 pr-3">Amount</th>
+                <th className="table-header text-left py-2 pb-3 pr-3">Category</th>
+                <th className="table-header text-left py-2 pb-3 pr-3 hidden sm:table-cell">Description</th>
                 <th className="w-16 pr-4 sm:pr-0"/>
               </tr>
             </thead>

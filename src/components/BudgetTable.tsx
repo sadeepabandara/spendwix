@@ -178,11 +178,11 @@ export default function BudgetTable({ title, table, rows, reload, extraCol, isPr
         <table className="w-full">
           <thead>
             <tr className="border-b border-brand-100 dark:border-brand-900/30">
-              <th className="table-header text-left py-2 pb-3">Name</th>
-              {extraCol && <th className="table-header text-left py-2 pb-3 hidden md:table-cell">{extraCol}</th>}
-              <th className="table-header text-right py-2 pb-3">Budget</th>
-              <th className="table-header text-right py-2 pb-3">Actual</th>
-              <th className="table-header text-right py-2 pb-3 hidden md:table-cell">Diff</th>
+              <th className="table-header text-left py-2 pb-3 pr-2">Name</th>
+              {extraCol && <th className="table-header text-left py-2 pb-3 pr-2 hidden md:table-cell">{extraCol}</th>}
+              <th className="table-header text-right py-2 pb-3 pr-2">Budget</th>
+              <th className="table-header text-right py-2 pb-3 pr-2">Actual</th>
+              <th className="table-header text-right py-2 pb-3 pr-2 hidden md:table-cell">Diff</th>
               <th className="table-header text-left py-2 pb-3 pl-4 hidden xl:table-cell">Progress</th>
               <th className="w-20"/>
             </tr>
@@ -262,11 +262,11 @@ export default function BudgetTable({ title, table, rows, reload, extraCol, isPr
           {rows.length > 0 && (
             <tfoot>
               <tr className="border-t border-brand-100 dark:border-brand-900/30">
-                <td className="pt-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</td>
+                <td className="pt-3 pr-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</td>
                 {extraCol && <td className="hidden md:table-cell"/>}
-                <td className="pt-3 text-sm font-medium text-right text-gray-700 dark:text-gray-300">{formatCurrency(totalBudget, currency)}</td>
-                <td className="pt-3 text-sm font-medium text-right text-gray-700 dark:text-gray-300">{formatCurrency(totalActual, currency)}</td>
-                <td className={clsx('pt-3 text-sm text-right font-medium hidden md:table-cell', totalBudget - totalActual >= 0 ? 'text-brand-600' : 'text-red-500')}>
+                <td className="pt-3 pr-2 text-sm font-medium text-right text-gray-700 dark:text-gray-300">{formatCurrency(totalBudget, currency)}</td>
+                <td className="pt-3 pr-2 text-sm font-medium text-right text-gray-700 dark:text-gray-300">{formatCurrency(totalActual, currency)}</td>
+                <td className={clsx('pt-3 pr-2 text-sm text-right font-medium hidden md:table-cell', totalBudget - totalActual >= 0 ? 'text-brand-600' : 'text-red-500')}>
                   {formatDiff(totalBudget - totalActual, currency)}
                 </td>
                 <td className="hidden xl:table-cell"/><td/>

@@ -51,17 +51,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const Logo = () => (
     <div className="flex items-center gap-2.5">
-      <div className="flex items-center justify-center flex-shrink-0 rounded-lg w-7 h-7"
-        style={{ background: 'linear-gradient(135deg, #6b5ce6, #ea5c84)' }}>
-        <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-          <path d="M4 9h10M9 4v10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-          <circle cx="9" cy="9" r="2" fill="white" fillOpacity="0.9"/>
-        </svg>
-      </div>
-      <span className="text-sm font-bold tracking-tight"
-        style={{ background: 'linear-gradient(135deg, #6b5ce6, #ea5c84)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+      <img src="/icon.svg" alt="SpendWix" className="flex-shrink-0 w-7 h-7" />
+      <div className="leading-none">
+        <div className="text-sm font-extrabold tracking-tight mt-[-4px]"
+          style={{ background: 'linear-gradient(135deg, #6b5ce6, #ea5c84)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           SpendWix
-      </span>
+        </div>
+        <div className="mt-[2px] text-[8px] font-medium tracking-[0.1em] text-brand-300 dark:text-brand-200">
+          BUDGET · TRACK · GROW
+        </div>
+      </div>
     </div>
   )
 
@@ -89,28 +88,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className="hidden lg:flex flex-col border-r border-brand-100 dark:border-brand-900/30 bg-white dark:bg-[#110f1e] flex-shrink-0 overflow-hidden z-30"
       >
-        <div className="flex items-center gap-2.5 px-4 h-14 border-b border-brand-100 dark:border-brand-900/30">
-          <div className="flex items-center justify-center flex-shrink-0 rounded-lg w-7 h-7"
-            style={{ background: 'linear-gradient(135deg, #6b5ce6, #ea5c84)' }}>
-            <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-              <path d="M4 9h10M9 4v10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-              <circle cx="9" cy="9" r="2" fill="white" fillOpacity="0.9"/>
-            </svg>
-          </div>
+        <div className="flex items-center gap-2.5 px-4 h-16 border-b border-brand-100 dark:border-brand-900/30">
           <AnimatePresence>
             {sidebarOpen && (
-              <motion.span initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}
-                className="text-sm font-bold tracking-tight whitespace-nowrap"
-                style={{ background: 'linear-gradient(135deg, #6b5ce6, #ea5c84)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                SpendWix
-              </motion.span>
+              <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}>
+                <Logo />
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
 
         <AnimatePresence>
           {sidebarOpen && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-3 pt-3 pb-1">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-3 pt-4 pb-2">
               <select value={currentMonth} onChange={e => setCurrentMonth(e.target.value)}
                 className="w-full text-xs rounded-lg px-2.5 py-2 focus:outline-none border border-brand-200 dark:border-brand-800/50 bg-brand-50/50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300">
                 {months.map(m => <option key={m} value={m}>{getMonthLabel(m)}</option>)}
@@ -169,9 +159,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Desktop sidebar toggle button */}
       <button onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="hidden lg:flex absolute top-[3.2rem] z-40 w-5 h-8 items-center justify-center rounded-r-lg transition-all"
+        className="hidden lg:flex absolute top-[3rem] z-40 w-5 h-8 items-center justify-center rounded-r-lg transition-all"
         style={{
-          left: sidebarOpen ? '13.5rem' : '3.5rem',
+          left: sidebarOpen ? '14rem' : '4rem',
           background: 'linear-gradient(135deg, rgba(107,92,230,0.15), rgba(234,92,132,0.1))',
           border: '1px solid rgba(107,92,230,0.2)',
           borderLeft: 'none',

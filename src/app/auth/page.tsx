@@ -111,13 +111,16 @@ export default function AuthPage() {
           <div className="absolute right-0 w-48 h-48 rounded-full top-1/4 blur-3xl opacity-40" style={{ background: 'radial-gradient(circle, #ea5c84, transparent 70%)' }}/>
 
           {/* Logo */}
-          <div className="relative flex items-center gap-3">
-            <div className="flex items-center justify-center shadow-lg w-9 h-9 rounded-xl" style={{ background: 'linear-gradient(135deg, #6b5ce6, #ea5c84)' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="white"/>
-              </svg>
+          <div className="relative flex items-center gap-2.5">
+            <img src="/icon.svg" alt="SpendWix" className="w-9 h-9" />
+            <div className="leading-none">
+              <div className="text-lg font-extrabold tracking-tight mt-[-6px]" style={{ background: 'linear-gradient(135deg, #a991fb, #ea5c84)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                SpendWix
+              </div>
+              <div className="mt-[2px] text-[9px] font-medium tracking-[0.12em]" style={{ color: '#cbc1ff' }}>
+                BUDGET · TRACK · GROW
+              </div>
             </div>
-            <span className="text-lg font-bold tracking-tight text-white">SpendWix</span>
           </div>
 
           {/* Main copy */}
