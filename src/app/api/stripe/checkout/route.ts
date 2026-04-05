@@ -78,8 +78,14 @@ export async function POST(req: NextRequest) {
       success_url: `${appUrl}/dashboard/upgrade?success=true`,
       cancel_url:  `${appUrl}/dashboard/upgrade?cancelled=true`,
       customer_email: user.email,
+      client_reference_id: user.id,
       metadata: {
         user_id: user.id,
+      },
+      subscription_data: {
+        metadata: {
+          user_id: user.id,
+        },
       },
     })
 
