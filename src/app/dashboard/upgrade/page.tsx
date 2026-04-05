@@ -317,20 +317,19 @@ export default function UpgradePage() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b5ce6" strokeWidth="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between w-full gap-2">
             <div>
-              <p className="text-sm text-brand-700 dark:text-brand-400 font-medium">You&apos;re on the Pro plan — thanks for supporting SpendWix!</p>
+              {!statusLoading && subscriptionStatus && (
+                <p className="text-xs sm:text-sm text-brand-700 dark:text-brand-300">
+                  {subscriptionStatus.cancelAtPeriodEnd
+                    ? 'Your Pro plan is set to cancel at period end.'
+                    : 'Your Pro plan is active and will renew automatically.'}
+                </p>
+              )}
               {!statusLoading && subscriptionStatus?.currentPeriodEnd && (
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {subscriptionStatus.cancelAtPeriodEnd
                     ? 'Access ends on '
                     : 'Next billing date: '}
                   {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString()}
-                </p>
-              )}
-              {!statusLoading && subscriptionStatus && (
-                <p className="text-xs sm:text-sm text-brand-700 dark:text-brand-300 mt-1">
-                  {subscriptionStatus.cancelAtPeriodEnd
-                    ? 'Your Pro plan is set to cancel at period end.'
-                    : 'Your Pro plan is active and will renew automatically.'}
                 </p>
               )}
             </div>

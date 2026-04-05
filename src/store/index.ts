@@ -2,6 +2,14 @@ import { create } from 'zustand'
 import { Currency, Profile, IncomeEntry, BillEntry, ExpenseEntry, SavingEntry, DebtEntry, Transaction } from '@/types'
 import { getCurrentMonth } from '@/lib/utils'
 
+const MONTH_STORAGE_KEY = 'spendwix:selected-month'
+
+function getInitialMonth() {
+  if (typeof window === 'undefined') return getCurrentMonth()
+  const saved = window.localStorage.getItem(MONTH_STORAGE_KEY)
+  return saved || getCurrentMonth()
+}
+
 interface AppState {
   profile: Profile | null
   currentMonth: string
@@ -42,7 +50,7 @@ interface AppState {
 
 export const useStore = create<AppState>((set, get) => ({
   profile: null,
-  currentMonth: getCurrentMonth(),
+  currentMonth: getInitialMonth(),
   income: [],
   bills: [],
   expenses: [],
@@ -53,7 +61,12 @@ export const useStore = create<AppState>((set, get) => ({
   sidebarOpen: true,
 
   setProfile: (p) => set({ profile: p }),
-  setCurrentMonth: (m) => set({ currentMonth: m }),
+  setCurrentMonth: (m) => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(MONTH_STORAGE_KEY, m)
+    }
+    set({ currentMonth: m })
+  },
   setIncome: (d) => set({ income: d }),
   setBills: (d) => set({ bills: d }),
   setExpenses: (d) => set({ expenses: d }),
