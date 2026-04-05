@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   const Logo = () => (
-    <div className="flex items-center gap-2.5">
+    <Link href="/dashboard" aria-label="Go to dashboard" className="flex items-center gap-2.5">
       <img src="/icon.svg" alt="SpendWix" className="flex-shrink-0 w-7 h-7" />
       <div className="leading-none">
         <div className="text-sm font-extrabold tracking-tight mt-[-4px]"
@@ -61,7 +61,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           BUDGET · TRACK · GROW
         </div>
       </div>
-    </div>
+    </Link>
   )
 
   const NavLink = ({ href, label, icon, onClick }: { href: string; label: string; icon: string; onClick?: () => void }) => {
