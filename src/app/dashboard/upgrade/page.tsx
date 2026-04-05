@@ -216,6 +216,7 @@ export default function UpgradePage() {
   const sym = CURRENCY_SYMBOLS[currency]
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [portalLoading, setPortalLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
 
   const handleUpgrade = async () => {
@@ -243,6 +244,29 @@ export default function UpgradePage() {
     setCheckoutLoading(false)
   }
 
+  const handleManageSubscription = async () => {
+    setCheckoutError('')
+    setPortalLoading(true)
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to open billing portal')
+      }
+      if (data.url) {
+        window.location.href = data.url
+        return
+      }
+      throw new Error('No billing portal URL returned')
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Failed to open billing portal'
+      setCheckoutError(message)
+    }
+    setPortalLoading(false)
+  }
+
   const cardAnim: Variants = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0, 0, 0.2, 1] } } }
 
   return (
@@ -254,7 +278,16 @@ export default function UpgradePage() {
           className="mb-6 rounded-2xl p-4 flex items-center gap-3"
           style={{ background: 'linear-gradient(135deg,rgba(107,92,230,0.1),rgba(234,92,132,0.08))', border: '1px solid rgba(107,92,230,0.25)' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b5ce6" strokeWidth="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <p className="text-sm text-brand-700 dark:text-brand-400 font-medium">You&apos;re on the Pro plan — thanks for supporting SpendWix!</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-2">
+            <p className="text-sm text-brand-700 dark:text-brand-400 font-medium">You&apos;re on the Pro plan — thanks for supporting SpendWix!</p>
+            <button
+              onClick={handleManageSubscription}
+              disabled={portalLoading}
+              className="btn-secondary text-xs sm:text-sm"
+            >
+              {portalLoading ? 'Opening portal...' : 'Manage subscription'}
+            </button>
+          </div>
         </motion.div>
       )}
 
