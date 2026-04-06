@@ -19,8 +19,8 @@ const GoogleIcon = () => (
 
 const AppleIcon = () => (
   <svg
-    width="18"
-    height="18"
+    width="20"
+    height="20"
     viewBox="0 0 48 48"
     fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +102,7 @@ export default function AuthPage() {
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.45, ease: 'easeOut' }}
-        className="relative z-10 grid w-full max-w-4xl grid-cols-1 overflow-hidden shadow-2xl md:grid-cols-2 rounded-2xl sm:rounded-3xl border border-brand-200/70 dark:border-brand-800/40"
+        className="relative z-10 grid w-full max-w-4xl grid-cols-1 overflow-hidden border shadow-2xl md:grid-cols-2 rounded-2xl sm:rounded-3xl border-brand-200/70 dark:border-brand-800/40"
       >
 
         {/* Left panel */}
@@ -114,7 +114,7 @@ export default function AuthPage() {
           }}/>
 
           {/* Glow orb */}
-          <div className="absolute right-0 w-48 h-48 rounded-full top-1/4 blur-3xl opacity-25 dark:opacity-40" style={{ background: 'radial-gradient(circle, #ea5c84, transparent 70%)' }}/>
+          <div className="absolute right-0 w-48 h-48 rounded-full opacity-25 top-1/4 blur-3xl dark:opacity-40" style={{ background: 'radial-gradient(circle, #ea5c84, transparent 70%)' }}/>
 
           {/* Logo */}
           <div className="relative flex items-center gap-2.5">
@@ -131,12 +131,12 @@ export default function AuthPage() {
 
           {/* Main copy */}
           <div className="relative">
-            <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold rounded-full bg-brand-100/80 text-brand-700 border border-brand-200 dark:bg-brand-950/50 dark:text-brand-300 dark:border-brand-800/50">
+            <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold border rounded-full bg-brand-100/80 text-brand-700 border-brand-200 dark:bg-brand-950/50 dark:text-brand-300 dark:border-brand-800/50">
               ✦ Budget smarter, live freer
             </div>
             <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
               Your money,<br/>
-              <span className="bg-gradient-to-r from-brand-500 to-accent-500 bg-clip-text text-transparent">
+              <span className="text-transparent bg-gradient-to-r from-brand-500 to-accent-500 bg-clip-text">
                 under control.
               </span>
             </h1>
@@ -146,7 +146,7 @@ export default function AuthPage() {
 
             <div className="grid grid-cols-3 gap-4 mt-8">
               {[['$0','to start'],['2 min','setup'],['100%','private']].map(([val, lbl]) => (
-                <div key={lbl} className="p-3 text-center rounded-2xl bg-white/80 border border-brand-200/70 dark:bg-brand-950/20 dark:border-brand-800/40">
+                <div key={lbl} className="p-3 text-center border rounded-2xl bg-white/80 border-brand-200/70 dark:bg-brand-950/20 dark:border-brand-800/40">
                   <div className="text-lg font-bold text-gray-900 dark:text-white">{val}</div>
                   <div className="text-xs mt-0.5 text-gray-500 dark:text-[#8b83b8]">{lbl}</div>
                 </div>
@@ -192,7 +192,7 @@ export default function AuthPage() {
                 transition={{ duration: 0.28 }}
               >
                 {/* Tab toggle */}
-                <div className="flex p-1 mb-7 rounded-xl bg-brand-50 border border-brand-100">
+                <div className="flex p-1 border mb-7 rounded-xl bg-brand-50 border-brand-100">
                   {(['signin','signup'] as const).map(t => (
                     <button key={t} onClick={() => { setTab(t); setError('') }}
                       className="flex-1 py-2.5 text-sm rounded-lg font-semibold transition-all"
@@ -222,12 +222,12 @@ export default function AuthPage() {
                 {/* Social auth */}
                 <div className="flex flex-col gap-3 mb-6">
                   <button onClick={() => handleOAuth('google')}
-                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 rounded-xl bg-white hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm">
+                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm">
                     <GoogleIcon />
                     Continue with Google
                   </button>
                   <button onClick={() => handleOAuth('apple')}
-                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all border border-gray-200 rounded-xl bg-white hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm">
+                    className="flex items-center justify-center gap-3 py-3 text-sm font-semibold text-gray-700 transition-all bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm">
                     <AppleIcon />
                     Continue with Apple
                   </button>
@@ -269,7 +269,7 @@ export default function AuthPage() {
                   )}
 
                   {error && (
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-3 py-2 text-xs text-red-500 rounded-lg bg-red-50 border border-red-100">
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-3 py-2 text-xs text-red-500 border border-red-100 rounded-lg bg-red-50">
                       {error}
                     </motion.p>
                   )}
