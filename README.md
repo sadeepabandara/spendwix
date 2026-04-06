@@ -1,56 +1,68 @@
-# SpendWix — Budget Tracker
+# SpendWix
 
-A modern, minimal personal finance tracker built with **Next.js 14**, **Supabase**, **Tailwind CSS**, and **Zustand**.
+Personal budget tracker built with Next.js App Router, Supabase, Stripe, Tailwind CSS, Recharts, and Zustand.
 
-## Features
+## What It Does
 
-- **Auth** — Google, Apple, and email/password sign-in via Supabase Auth
-- **Income** — Track multiple income sources with expected vs actual
-- **Bills** — Recurring bills with due days and progress tracking
-- **Expenses** — All expense categories with budget vs actual
-- **Savings** — Savings goals with visual progress cards
-- **Debt** — Monthly debt payment tracking
-- **Transactions** — Log every purchase, auto-linked to budget categories
-- **Daily view** — Day-by-day balance with bar chart
-- **Multi-currency** — USD, AUD, LKR, GBP
-- **Monetisation** — Free (5 entries/section) vs Pro (unlimited) with upgrade page
-- **Month selector** — Switch between any of the last 12 months
+- Email/password and social auth with Supabase (Google and Apple options in UI)
+- Monthly income, bills, expenses, savings, debt, and transaction tracking
+- Budget vs actual dashboards with charts and daily activity view
+- Multi-currency experience (pricing and formatting adapt to currency)
+- Free vs Pro plan model with per-section free limits and Stripe upgrade flow
+- Stripe customer portal support for subscription management
+- SEO baseline setup with metadata, robots, sitemap, and custom OG image
 
----
+## Current Plan Model
 
-## Quick Start
+- Free: up to 5 entries per section per month
+- Pro: unlimited entries
+- The Upgrade page also lists roadmap-style Pro perks (for example CSV export)
+- Stripe webhook updates `profiles.plan` between `free` and `pro`
 
-### 1. Clone and install
+## Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Supabase (Auth + Postgres + RLS)
+- Stripe (subscriptions)
+- Tailwind CSS
+- Zustand
+- Recharts
+- Framer Motion
+
+## Local Setup
+
+### 1. Install dependencies
 
 ```bash
-cd spendwix
 npm install
 ```
 
-### 2. Set up Supabase
+### 2. Configure Supabase
 
-1. Go to [supabase.com](https://supabase.com) and create a free project
-2. In your project dashboard, go to **SQL Editor**
-3. Copy and run the entire contents of `supabase/schema.sql`
-4. Go to **Authentication → Providers** and enable:
-   - **Google** (needs Google Cloud OAuth credentials)
-   - **Apple** (needs Apple Developer credentials)
-   - **Email** is enabled by default
+1. Create a Supabase project.
+2. Open SQL Editor in Supabase.
+3. Run everything in `supabase/schema.sql`.
+4. Configure auth providers you want to use.
 
-### 3. Configure environment variables
+### 3. Create environment file
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-Fill in your values:
-```
-NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+Required values:
 
-Both values are in your Supabase project under **Settings → API**.
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_PRICE_ID_MONTHLY=your_stripe_monthly_price_id
+STRIPE_PRICE_ID_ANNUAL=your_stripe_annual_price_id
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+```
 
 ### 4. Run the app
 
@@ -58,111 +70,79 @@ Both values are in your Supabase project under **Settings → API**.
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open `http://localhost:3000`.
 
----
+## Stripe Integration Notes
 
-## Project Structure
+Implemented API routes:
 
-```
-src/
-├── app/
-│   ├── auth/
-│   │   ├── page.tsx          # Sign in / sign up screen
-│   │   └── callback/
-│   │       └── route.ts      # OAuth callback handler
-│   ├── dashboard/
-│   │   ├── layout.tsx        # Sidebar + month selector
-│   │   ├── page.tsx          # Dashboard overview
-│   │   ├── income/page.tsx
-│   │   ├── bills/page.tsx
-│   │   ├── expenses/page.tsx
-│   │   ├── savings/page.tsx
-│   │   ├── debt/page.tsx
-│   │   ├── transactions/page.tsx
-│   │   ├── daily/page.tsx
-│   │   ├── upgrade/page.tsx  # Pricing / monetisation
-│   │   └── settings/page.tsx
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx              # Redirects to /auth or /dashboard
-├── components/
-│   ├── BudgetTable.tsx       # Reusable table for bills/expenses/savings/debt
-│   ├── PageHeader.tsx
-│   └── StatCard.tsx
-├── hooks/
-│   └── useMonthData.ts       # Loads all data for current month
-├── lib/
-│   ├── supabase.ts           # Supabase client (browser + server)
-│   └── utils.ts              # Currency formatting, date helpers
-├── store/
-│   └── index.ts              # Zustand global state
-└── types/
-    └── index.ts              # TypeScript types
-supabase/
-└── schema.sql                # Full database schema + RLS policies
-```
+- `POST /api/stripe/checkout`
+- `POST /api/stripe/portal`
+- `GET /api/stripe/subscription-status`
+- `POST /api/stripe/webhook`
 
----
+Recommended webhook events:
 
-## Monetisation
+- `checkout.session.completed`
+- `invoice.payment_succeeded`
+- `customer.subscription.deleted`
 
-The app has a built-in **Free vs Pro** model:
-
-| Feature | Free | Pro |
-|---|---|---|
-| Entries per section/month | 5 | Unlimited |
-| All tracking sections | ✓ | ✓ |
-| Multi-currency | ✓ | ✓ |
-| CSV export | — | ✓ |
-| Priority support | — | ✓ |
-
-**Pricing** (in `src/app/dashboard/upgrade/page.tsx`):
-- USD: $4.99/mo or $47.99/yr
-- AUD: $7.99/mo or $74.99/yr
-- GBP: £3.99/mo or £37.99/yr
-- LKR: Rs1,490/mo or Rs14,900/yr
-
-To add real payment processing, integrate **Stripe** with a webhook that updates `profiles.plan` to `'pro'` on successful payment.
-
----
-
-## Deploying to Vercel
+Webhook endpoint for local testing:
 
 ```bash
-npm install -g vercel
-vercel
+stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 
-Set the same environment variables in your Vercel project dashboard under **Settings → Environment Variables**.
+## SEO and Social Preview
 
-Update your Supabase Auth settings:
-- Go to **Authentication → URL Configuration**
-- Add your Vercel URL to **Site URL** and **Redirect URLs**
+Configured in app metadata:
 
----
+- Open Graph image: `public/og-image.png` (1200x630)
+- Twitter card image: `public/og-image.png`
+- `src/app/robots.ts` for crawl rules
+- `src/app/sitemap.ts` for sitemap generation
 
-## Adding OAuth Providers
+Private areas are blocked from indexing:
 
-### Google
-1. Create credentials at [console.cloud.google.com](https://console.cloud.google.com)
-2. Add `https://your-project.supabase.co/auth/v1/callback` as an authorised redirect URI
-3. Paste Client ID and Secret into Supabase → Authentication → Providers → Google
+- `/auth/*`
+- `/dashboard/*`
+- `/api/*`
 
-### Apple
-1. Create an App ID and Service ID at [developer.apple.com](https://developer.apple.com)
-2. Follow the [Supabase Apple Auth guide](https://supabase.com/docs/guides/auth/social-login/auth-apple)
+## Useful Scripts
 
----
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
 
-## Tech Stack
+## Project Structure (High Level)
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Database + Auth | Supabase (PostgreSQL) |
-| Styling | Tailwind CSS |
-| State | Zustand |
-| Charts | Recharts |
-| Language | TypeScript |
-| Deployment | Vercel |
+```text
+src/
+    app/
+        auth/
+        dashboard/
+        api/stripe/
+        layout.tsx
+        page.tsx
+        robots.ts
+        sitemap.ts
+    components/
+    hooks/
+    lib/
+    store/
+    types/
+supabase/
+    schema.sql
+```
+
+## Deploying
+
+Deploy on Vercel and set the same env vars in project settings.
+
+Important for production URLs:
+
+- Set `NEXT_PUBLIC_APP_URL` to your live domain (for example `https://spendwix.vercel.app`)
+- Add your live auth callback URLs in Supabase Auth URL configuration
