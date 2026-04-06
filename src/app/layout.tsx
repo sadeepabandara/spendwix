@@ -33,10 +33,10 @@ export const metadata: Metadata = {
     siteName: 'SpendWix',
     images: [
       {
-        url: '/icon.svg',
-        width: 512,
-        height: 512,
-        alt: 'SpendWix logo',
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'SpendWix preview image',
       },
     ],
   },
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SpendWix | Budget Tracker',
     description: 'Track your income, bills, expenses, savings and debt — all in one place.',
-    images: ['/icon.svg'],
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
