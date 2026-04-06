@@ -51,6 +51,10 @@ export default function AuthPage() {
     setLoading(true)
     setError('')
 
+    const redirectUrl = typeof window !== 'undefined'
+      ? `${window.location.origin}/auth/callback`
+      : `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+
     if (tab === 'signin') {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) setError(error.message)
@@ -61,7 +65,7 @@ export default function AuthPage() {
         password,
         options: {
           data: { full_name: name },
-          emailRedirectTo: `${location.origin}/auth/callback`,
+          emailRedirectTo: redirectUrl,
         },
       })
       if (error) setError(error.message)
@@ -72,20 +76,30 @@ export default function AuthPage() {
   }
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
+    const redirectUrl = typeof window !== 'undefined'
+      ? `${window.location.origin}/auth/callback`
+      : `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${location.origin}/auth/callback` },
+      options: { redirectTo: redirectUrl },
     })
     if (error) setError(error.message)
   }
 
   const handleForgot = async () => {
     if (!email) { setError('Enter your email first'); return }
+
+    // Use location.origin for the redirect (works for both localhost and production)
+    const redirectTo = typeof window !== 'undefined'
+      ? `${window.location.origin}/auth/reset`
+      : `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset`
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${location.origin}/auth/reset`,
+      redirectTo,
     })
     if (error) setError(error.message)
-    else setMessage('Password reset email sent!')
+    else setMessage('Password reset email sent! Check your inbox.')
   }
 
   return (
